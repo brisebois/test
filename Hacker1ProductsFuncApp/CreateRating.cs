@@ -10,6 +10,7 @@ namespace Hacker1ProductsFuncApp
 {
     public static class CreateRating
     {
+        static HttpClient client = new HttpClient();
         [FunctionName("CreateRating")]
         public static HttpResponseMessage Run([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "ratings")]HttpRequestMessage req,
             [DocumentDB(
@@ -34,7 +35,6 @@ namespace Hacker1ProductsFuncApp
 
             try
             {
-                HttpClient client = new HttpClient();
                 var json = client.GetStringAsync($"https://hacker1.azurewebsites.net/api/users/{newRating.userId}").Result;
                 var user = JsonConvert.DeserializeObject<User>(json);
             }
@@ -45,7 +45,6 @@ namespace Hacker1ProductsFuncApp
 
             try
             {
-                HttpClient client = new HttpClient();
                 var json = client.GetStringAsync($"https://hacker1.azurewebsites.net/api/products/{newRating.productId}").Result;
                 var user = JsonConvert.DeserializeObject<Product>(json);
             }
