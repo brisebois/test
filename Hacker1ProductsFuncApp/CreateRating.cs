@@ -1,18 +1,17 @@
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Azure.WebJobs.Host;
-using Refit;
+using Newtonsoft.Json;
 using System;
 using System.Net;
 using System.Net.Http;
-using Newtonsoft.Json;
 
 namespace Hacker1ProductsFuncApp
 {
     public static class CreateRating
     {
         [FunctionName("CreateRating")]
-        public static HttpResponseMessage Run([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "ratings")]HttpRequestMessage req, 
+        public static HttpResponseMessage Run([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "ratings")]HttpRequestMessage req,
             [DocumentDB(
                 databaseName: "OpenHack",
                 collectionName: "Ratings",
@@ -25,7 +24,7 @@ namespace Hacker1ProductsFuncApp
             try
             {
                 dynamic body = req.Content.ReadAsStringAsync().Result;
-               
+
                 newRating = JsonConvert.DeserializeObject<NewRating>(body as string);
             }
             catch
@@ -35,7 +34,9 @@ namespace Hacker1ProductsFuncApp
 
             try
             {
-                var user = RestService.For<IService>("https://hacker1.azurewebsites.net/").GetUser(newRating.userId).Result;
+                HttpClient client = new HttpClient();
+                var json = client.GetStringAsync($"https://hacker1.azurewebsites.net/api/users/{newRating.userId}").Result;
+                var user = JsonConvert.DeserializeObject<User>(json);
             }
             catch
             {
@@ -44,7 +45,9 @@ namespace Hacker1ProductsFuncApp
 
             try
             {
-                var product = RestService.For<IService>("https://hacker1.azurewebsites.net/").GetProduct(newRating.productId).Result;
+                HttpClient client = new HttpClient();
+                var json = client.GetStringAsync($"https://hacker1.azurewebsites.net/api/products/{newRating.productId}").Result;
+                var user = JsonConvert.DeserializeObject<Product>(json);
             }
             catch
             {
