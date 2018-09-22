@@ -1,0 +1,152 @@
+﻿swagger: '2.0'
+info:
+  title: hacker1.azurewebsites.net
+  version: 1.0.0
+host: hacker1.azurewebsites.net
+basePath: /
+schemes:
+  - https
+  - http
+paths:
+  '/api/products/{productId}':
+    get:
+      operationId: '/api/products/{productId}/get'
+      produces: []
+      consumes: []
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          type: string
+      description: >-
+        Replace with Operation Object
+        #http://swagger.io/specification/#operationObject
+      responses:
+        '200':
+          description: Success operation
+      security:
+        - apikeyQuery: []
+  '/api/users/{userId}':
+    get:
+      operationId: '/api/users/{userId}/get'
+      produces: []
+      consumes: []
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          type: string
+      description: >-
+        Replace with Operation Object
+        #http://swagger.io/specification/#operationObject
+      responses:
+        '200':
+          description: Success operation
+      security:
+        - apikeyQuery: []
+  /api./products:
+    get:
+      operationId: /api/products/get
+      produces: []
+      consumes: []
+      parameters: []
+      description: >-
+        Replace with Operation Object
+        #http://swagger.io/specification/#operationObject
+      responses:
+        '200':
+          description: Success operation
+      security:
+        - apikeyQuery: []
+  /api/ratings:
+    post:
+      operationId: /api/ratings/post
+      produces:
+      - "application/json"
+      consumes: 
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Rating"
+        required: true
+        schema:
+          $ref: "#/definitions/Rating"
+      description: >-
+        create a rting
+      responses:
+        '200':
+          description: Success operation
+      security:
+        - apikeyQuery: []
+  /api/GetProductDescription:
+    get:
+      operationId: /api/GetProductDescription/get
+      produces: []
+      consumes: []
+      parameters: []
+      description: >-
+        Replace with Operation Object
+        #http://swagger.io/specification/#operationObject
+      responses:
+        '200':
+          description: Success operation
+      security:
+        - apikeyQuery: []
+  '/api/ratings/{ratingId}':
+    get:
+      operationId: '/api/ratings/{ratingId}/get'
+      produces: []
+      consumes: []
+      parameters:
+        - name: ratingId
+          in: path
+          required: true
+          type: string
+      description: >-
+        Replace with Operation Object
+        #http://swagger.io/specification/#operationObject
+      responses:
+        '200':
+          description: Success operation
+      security:
+        - apikeyQuery: []
+  '/api/user/{userId}/ratings/':
+    get:
+      operationId: '/api/user/{userId}/ratings//get'
+      produces: []
+      consumes: []
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          type: string
+      description: >-
+        Replace with Operation Object
+        #http://swagger.io/specification/#operationObject
+      responses:
+        '200':
+          description: Success operation
+      security:
+        - apikeyQuery: []
+definitions:
+  Rating:
+    type: object
+    properties:
+      locationName:
+        type: string
+      productId:
+        type: string
+      rating:
+        type: integer
+      userId:
+        type: string
+      userNotes:
+        type: string
+    example:
+      "{\r\n    \"userId\": \"cc20a6fb-a91f-4192-874d-132493685376\",\r\n    \"productId\": \"4c25613a-a3c2-4ef3-8e02-9c335eb23204\",\r\n    \"locationName\": \"Sample ice cream shop\",\r\n    \"rating\": 0,\r\n    \"userNotes\": \"I love the subtle notes of orange in this ice cream!\"\r\n}"
+securityDefinitions:
+  apikeyQuery:
+    type: apiKey
+    name: code
+    in: query

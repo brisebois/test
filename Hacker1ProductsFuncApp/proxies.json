@@ -12,7 +12,7 @@
     },
     "GetProducts": {
       "matchCondition": {
-        "route": "api./products",
+        "route": "api/products",
         "methods": [
           "GET"
         ]
