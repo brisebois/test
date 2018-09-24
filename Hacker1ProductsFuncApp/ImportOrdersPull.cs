@@ -5,19 +5,17 @@ using Microsoft.Azure.WebJobs.Host;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.Serialization;
 using System.Threading.Tasks;
 
 namespace Hacker1ProductsFuncApp
 {
-    public static class ImportOrders
+    public static class ImportOrdersPull
     {
-        [FunctionName("ImportOrders")]
+        //[FunctionName("ImportOrders")]
         public static async Task Run(
-            [TimerTrigger("0 */1 * * * *")]TimerInfo timer,
+           // [TimerTrigger("0 */1 * * * *")]TimerInfo timer,
             [DocumentDB(
                 databaseName: "OpenHack",
                 collectionName: "Orders",
@@ -102,65 +100,4 @@ namespace Hacker1ProductsFuncApp
         }
     }
 
-    // Line Item ponumber,productid,quantity,unitcost,totalcost,totaltax
-
-    [DataContract]
-    public class LineItem
-    {
-        [DataMember(Name = "product")]
-        public ProductDetail Product { get; set; }
-        [DataMember(Name = "quantity")]
-        public int Quantity { get; set; }
-        [DataMember(Name = "unitCost")]
-        public double UnitCost { get; set; }
-        [DataMember(Name = "totalCost")]
-        public double TotalCost { get; set; }
-        [DataMember(Name = "totalTax")]
-        public double TotalTax { get; set; }
-    }
-
-    // INFO productid,productname,productdescription
-
-    [DataContract]
-    public class ProductDetail
-    {
-        [DataMember(Name = "id")]
-        public string Id { get; set; }
-        [DataMember(Name = "name")]
-        public string Name { get; set; }
-        [DataMember(Name = "description")]
-        public string Description { get; set; }
-    }
-
-    //HEADER ponumber,datetime,locationid,locationname,locationaddress,locationpostcode,totalcost,totaltax
-
-    [DataContract]
-    public class Order
-    {
-        [DataMember(Name = "id")]
-        public string Id { get; set; }
-        [DataMember(Name = "datetime")]
-        public DateTime Datetime { get; set; }
-        [DataMember(Name = "location")]
-        public Location Location { get; set; } = new Location();
-        [DataMember(Name = "totalTax")]
-        public double TotalTax { get; set; }
-        [DataMember(Name = "totalCost")]
-        public double TotalCost { get; set; }
-        [DataMember(Name = "lineItems")]
-        public List<LineItem> LineItems { get; set; } = new List<LineItem>();
-    }
-
-    [DataContract]
-    public class Location
-    {
-        [DataMember(Name = "id")]
-        public string Id { get; set; }
-        [DataMember(Name = "name")]
-        public string Name { get; set; }
-        [DataMember(Name = "address")]
-        public string Address { get; set; }
-        [DataMember(Name = "postcode")]
-        public string PostCode { get; set; }
-    }
 }
