@@ -1,2 +1,5 @@
 {
+  "durableTask": {
+    "HubName": "OrderProcessing"
+  }
 }

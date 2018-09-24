@@ -1,28 +1,93 @@
 // This is the default URL for triggering event grid function in the local environment.
 // http://localhost:7071/admin/extensions/EventGridExtensionConfig?functionName={functionname} 
 
-using System;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using CsvHelper;
 using CsvHelper.Configuration;
 using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Host;
 using Microsoft.Azure.WebJobs.Extensions.EventGrid;
+using Microsoft.Azure.WebJobs.Extensions.Http;
+using Microsoft.Azure.WebJobs.Host;
 using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Blob;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
+using Microsoft.WindowsAzure.Storage.Blob;
 
 namespace Hacker1ProductsFuncApp
 {
+    public static class StartImportMissedPurchaseOrders
+    {
+        [FunctionName("StartImportMissedPurchaseOrders")]
+        public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "import")]
+                                                           HttpRequestMessage req,
+                                                           [OrchestrationClient] DurableOrchestrationClient client,
+                                                           TraceWriter log)
+        {
+            await client.StartNewAsync("ImportMissedPurchaseOrders",null);
+            return req.CreateResponse(HttpStatusCode.Accepted);
+        }
+    }
+
+    public static class ImportMissedPurchaseOrders
+    {
+        [FunctionName("ImportMissedPurchaseOrders")]
+        public static async void Run([OrchestrationTrigger] DurableOrchestrationContext context,
+                                     [OrchestrationClient] DurableOrchestrationClient client,
+                                     TraceWriter log)
+        {
+            var account = CloudStorageAccount.Parse(Environment.GetEnvironmentVariable("StorageConnectionString"));
+            var blobClient = account.CreateCloudBlobClient();
+            var container = blobClient.GetContainerReference("challengesixblob");
+
+            var resultSegment = await container.ListBlobsSegmentedAsync(null);
+
+            do
+            {
+                foreach (var r in resultSegment.Results)
+                {
+                    if (!(r is CloudBlockBlob blob))
+                        continue;
+
+                    blob.FetchAttributes();
+                    if (blob.Metadata.ContainsKey("imported"))
+                        continue;
+
+                    var id = blob.Name.Substring(0, blob.Name.IndexOf("-", StringComparison.Ordinal));
+
+                    var status = await client.GetStatusAsync(id);
+                    if (status == null)
+                        await client.StartNewAsync("NewOrder", id, null);
+
+                    if (blob.Name.EndsWith("OrderHeaderDetails.csv"))
+                    {
+                        await client.RaiseEventAsync(id, "OrderHeaderDetails.csv", blob.Name);
+                    }
+                    else if (blob.Name.EndsWith("ProductInformation.csv"))
+                    {
+                        await client.RaiseEventAsync(id, "ProductInformation.csv", blob.Name);
+                    }
+                    else if (blob.Name.EndsWith("OrderLineItems.csv"))
+                    {
+                        await client.RaiseEventAsync(id, "OrderLineItems.csv", blob.Name);
+                    }
+                }
+
+                resultSegment = await container.ListBlobsSegmentedAsync(resultSegment.ContinuationToken);
+            } while (resultSegment.ContinuationToken != null);
+        }
+    }
+
     public static class OnBlobCreated
     {
         [FunctionName("OnBlobCreated")]
-        public static async void Run([EventGridTrigger]JObject eventGridEvent, 
-                                     [OrchestrationClient] DurableOrchestrationClient client, 
-                                     TraceWriter log)
+        public static async void Run([EventGridTrigger]JObject eventGridEvent,
+            [OrchestrationClient] DurableOrchestrationClient client,
+            TraceWriter log)
         {
             log.Info(eventGridEvent.ToString(Formatting.Indented));
 
@@ -33,7 +98,12 @@ namespace Hacker1ProductsFuncApp
             var blobUrl = eventGridEvent.SelectToken(@"data.url").Value<string>();
 
             var blob = new CloudBlockBlob(new Uri(blobUrl));
+
             var id = blob.Name.Substring(0, blob.Name.IndexOf("-", StringComparison.Ordinal));
+
+            var status = await client.GetStatusAsync(id);
+            if (status == null)
+                await client.StartNewAsync("NewOrder", id, null);
 
             if (blob.Name.EndsWith("OrderHeaderDetails.csv"))
             {
@@ -120,15 +190,15 @@ namespace Hacker1ProductsFuncApp
             }
 
             foreach (var order in orderDictionary)
-                await context.CallActivityAsync("PersistOrder", order.Value);
+                await context.CallActivityWithRetryAsync("PersistOrder", new RetryOptions(TimeSpan.FromSeconds(2), 10), order.Value);
 
-            headerBlob.Metadata.Add("imported","true");
+            headerBlob.Metadata.Add("imported", "true");
             await headerBlob.SetMetadataAsync();
 
-            infoBlob.Metadata.Add("imported","true");
+            infoBlob.Metadata.Add("imported", "true");
             await infoBlob.SetMetadataAsync();
 
-            lineItemsBlob.Metadata.Add("imported","true");
+            lineItemsBlob.Metadata.Add("imported", "true");
             await lineItemsBlob.SetMetadataAsync();
         }
 
@@ -136,7 +206,7 @@ namespace Hacker1ProductsFuncApp
         {
             [FunctionName("PersistOrder")]
             public static async Task Run(
-                [OrchestrationTrigger] DurableOrchestrationContext context,
+                [ActivityTrigger] Order order,
                 [DocumentDB(
                     databaseName: "OpenHack",
                     collectionName: "Orders",
@@ -144,7 +214,6 @@ namespace Hacker1ProductsFuncApp
                 IAsyncCollector<Order> ordersOut,
                 TraceWriter log)
             {
-                var order = context.GetInput<Order>();
                 await ordersOut.AddAsync(order);
             }
         }
