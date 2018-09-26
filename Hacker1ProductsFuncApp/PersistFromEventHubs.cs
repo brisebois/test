@@ -1,24 +1,26 @@
-using System;
-using System.Runtime.Serialization;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
 using Microsoft.Azure.WebJobs.ServiceBus;
 using Newtonsoft.Json;
+using System;
+using System.Linq;
+using System.Runtime.Serialization;
 
 namespace Hacker1ProductsFuncApp
 {
     public static class PersistFromEventHubs
     {
         [FunctionName("PersistFromEventHubs")]
-        public static void Run([EventHubTrigger("hacker1ehub", Connection = "EventHubsConnectionString")]string myEventHubMessage,
-                               [DocumentDB(
+        public static void Run([EventHubTrigger("hacker1ehub", Connection = "EventHubsConnectionString")]string[] messages,
+                                [DocumentDB(
                                     databaseName: "OpenHack",
                                     collectionName: "SalesEvents",
                                     ConnectionStringSetting = "CosmosDBConnection")]
-                                out dynamic document,
+                                IAsyncCollector<SalesEvent> salesEvents,
                                 TraceWriter log)
         {
-            document = JsonConvert.DeserializeObject<SalesEvent>(myEventHubMessage);
+            var events = messages.Select(JsonConvert.DeserializeObject<SalesEvent>).ToList();
+            events.ForEach(async e => await salesEvents.AddAsync(e));
         }
     }
 

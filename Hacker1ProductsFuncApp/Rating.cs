@@ -6,6 +6,9 @@ namespace Hacker1ProductsFuncApp
     public class Rating
     {
         [DataMember]
+        public double? sentimentScore { get; set; }
+
+        [DataMember]
         public string id { get; set; }
         [DataMember]
         public string userId { get; set; }
