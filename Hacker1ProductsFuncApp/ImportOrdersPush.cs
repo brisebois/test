@@ -36,7 +36,7 @@ namespace Hacker1ProductsFuncApp
     public static class ImportMissedPurchaseOrders
     {
         [FunctionName("ImportMissedPurchaseOrders")]
-        public static async void Run([OrchestrationTrigger] DurableOrchestrationContext context,
+        public static async Task Run([OrchestrationTrigger] DurableOrchestrationContext context,
                                      [OrchestrationClient] DurableOrchestrationClient client,
                                      TraceWriter log)
         {
@@ -85,7 +85,7 @@ namespace Hacker1ProductsFuncApp
     public static class OnBlobCreated
     {
         [FunctionName("OnBlobCreated")]
-        public static async void Run([EventGridTrigger]JObject eventGridEvent,
+        public static async Task Run([EventGridTrigger]JObject eventGridEvent,
             [OrchestrationClient] DurableOrchestrationClient client,
             TraceWriter log)
         {

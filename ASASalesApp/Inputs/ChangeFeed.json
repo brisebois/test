@@ -1,0 +1,25 @@
+﻿{
+  "Sample": "{\r\n  \"type\": \"rating\",\r\n  \"sentiment\": 0.90105760097503662,\r\n  \"rating\": 4,\r\n  \"productId\": \"0f5a0fe8-4506-4332-969e-699a693334a8\"\r\n}",
+  "EventHubProperties": {
+    "ConsumerGroupName": null,
+    "EventHubName": "changefeed",
+    "ServiceBusNamespace": "hacker1",
+    "SharedAccessPolicyKey": null,
+    "SharedAccessPolicyName": "RootManageSharedAccessKey"
+  },
+  "BlobStorageProperties": null,
+  "IoTHubProperties": null,
+  "BlobReferenceProperties": null,
+  "DataSourceCredentialDomain": "085873e4-c8e6-4684-a058-7eff0272ad02.StreamAnalyticsCredential",
+  "Name": "ChangeFeed",
+  "Type": "Data Stream",
+  "DataSourceType": "Event Hub",
+  "Serialization": {
+    "Encoding": "UTF8",
+    "Type": "Json",
+    "FieldDelimiter": null,
+    "Format": null
+  },
+  "CompresssionType": "None",
+  "ScriptType": "Input"
+}

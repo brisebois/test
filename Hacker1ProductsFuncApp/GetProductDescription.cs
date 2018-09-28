@@ -12,14 +12,16 @@ namespace Hacker1ProductsFuncApp
     public static class GetProductDescription
     {
         [FunctionName("GetProductDescription")]
-        public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)]HttpRequestMessage req, TraceWriter log)
+        public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)]HttpRequestMessage req, 
+            TraceWriter log)
         {
             // parse query parameter
             var productId = req.GetQueryNameValuePairs()
                 .FirstOrDefault(q => string.Compare(q.Key, "productId", StringComparison.OrdinalIgnoreCase) == 0)
                 .Value;
 
-            return productId == null ? req.CreateErrorResponse(HttpStatusCode.BadRequest,"productId has no value") : req.CreateResponse(HttpStatusCode.OK, $"The product name for your product id {productId} is Starfruit Explosion");
+            return productId == null ? req.CreateErrorResponse(HttpStatusCode.BadRequest,"productId has no value") 
+                                     : req.CreateResponse(HttpStatusCode.OK, $"The product name for your product id {productId} is Starfruit Explosion");
         }
     }
 }

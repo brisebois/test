@@ -1,0 +1,15 @@
+﻿{
+  "DataLocale": "en-US",
+  "OutputErrorPolicy": "Drop",
+  "EventsLateArrivalMaxDelayInSeconds": 5,
+  "EventsOutOfOrderMaxDelayInSeconds": 0,
+  "EventsOutOfOrderPolicy": "Adjust",
+  "StreamingUnits": 1,
+  "CompatibilityLevel": "1.0",
+  "AccountName": null,
+  "AccountKey": null,
+  "ContainerName": null,
+  "UploadFromLocal": true,
+  "DataSourceCredentialDomain": null,
+  "ScriptType": "JobConfig"
+}

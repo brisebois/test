@@ -1,0 +1,25 @@
+﻿{
+  "Sample": "{\"header\":{\"salesNumber\":\"7c2f6348-07f5-f9f3-3f0a-4802f6fcf396\",\"dateTime\":\"2018-09-26 12:01:44\",\"locationId\":\"JJJ000\",\"locationName\":\"Liberty's Delightful Sinful Bakery & Cafe\",\"locationAddress\":\"441 36th Street\",\"locationPostcode\":\"98133\",\"totalCost\":\"12.47\",\"totalTax\":\"1.25\"},\"details\":[{\"productId\":\"e4e7068e-500e-4a00-8be4-630d4594735b\",\"quantity\":\"2\",\"unitCost\":\"3.99\",\"totalCost\":\"7.98\",\"totalTax\":\"0.80\",\"productName\":\"It's Grape!\",\"productDescription\":\"Unraisinably good ice cream.\"},{\"productId\":\"76065ecd-8a14-426d-a4cd-abbde2acbb10\",\"quantity\":\"1\",\"unitCost\":\"4.49\",\"totalCost\":\"4.49\",\"totalTax\":\"0.45\",\"productName\":\"Gone Bananas\",\"productDescription\":\"I'm not sure how appealing banana ice cream really is.\"}]}",
+  "EventHubProperties": {
+    "ConsumerGroupName": "analytics",
+    "EventHubName": "hacker1ehub",
+    "ServiceBusNamespace": "hacker1",
+    "SharedAccessPolicyKey": null,
+    "SharedAccessPolicyName": "RootManageSharedAccessKey"
+  },
+  "BlobStorageProperties": null,
+  "IoTHubProperties": null,
+  "BlobReferenceProperties": null,
+  "DataSourceCredentialDomain": "a5a46399-7289-43ad-aca1-b19edfc2785a.StreamAnalyticsCredential",
+  "Name": "PosSaleEvents",
+  "Type": "Data Stream",
+  "DataSourceType": "Event Hub",
+  "Serialization": {
+    "Encoding": "UTF8",
+    "Type": "Json",
+    "FieldDelimiter": null,
+    "Format": null
+  },
+  "CompresssionType": "None",
+  "ScriptType": "Input"
+}

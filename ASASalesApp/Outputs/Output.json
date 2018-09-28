@@ -1,0 +1,33 @@
+﻿{
+  "EventHubProperties": null,
+  "BlobStorageProperties": {
+    "Container": "reports",
+    "DateFormat": "yyyy/MM/dd",
+    "PathPattern": "{date}/{time}",
+    "StorageAccounts": [
+      {
+        "AccountKey": null,
+        "AccountName": "hacker1storage"
+      }
+    ],
+    "TimeFormat": "HH"
+  },
+  "SQLDatabaseProperties": null,
+  "TableStorageProperties": null,
+  "ServiceBusQueueProperties": null,
+  "ServiceBusTopicProperties": null,
+  "DocumentDbProperties": null,
+  "PowellBIProperties": null,
+  "AzureDataLakeStoreProperties": null,
+  "AzureFunctionProperties": null,
+  "DataSourceCredentialDomain": "c66866a1-250e-4091-b37b-a4058b043fbc.StreamAnalyticsCredential",
+  "Name": "Output",
+  "DataSourceType": "Blob Storage",
+  "Serialization": {
+    "Encoding": "UTF8",
+    "Type": "Json",
+    "FieldDelimiter": null,
+    "Format": "Array"
+  },
+  "ScriptType": "Output"
+}

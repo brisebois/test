@@ -1,0 +1,75 @@
+﻿WITH 
+SALEEVENTS AS (
+SELECT   
+    sale.ArrayValue.productId as productId,
+    cast(sale.ArrayValue.totalCost as float) as totalCost
+FROM PosSaleEvents as e
+CROSS APPLY GetArrayElements(e.details) AS sale
+),
+PURCHASEORDERITEMS AS (
+SELECT 
+    po.Id as productId,
+    cast(po.totalcost as float) as totalCost
+FROM ChangeFeed po
+WHERE r.rating IS NULL
+),
+RATINGS AS (
+SELECT 
+    r.productId,
+    cast(r.rating as bigint) as rating,
+    cast(r.sentiment as float) as sentiment
+FROM ChangeFeed r
+WHERE r.rating IS NOT NULL
+),
+DETAILEDSALEEVENTS as (
+SELECT 
+    se.productId,
+    SUM(se.totalCost) as saleEventTotalCost,
+    system.Timestamp as Time
+FROM SALEEVENTS se
+GROUP BY se.productId,
+         TumblingWindow(minute, 5)),
+DETAILEDPURCHASEORDERS as (
+SELECT 
+    po.productId,
+    SUM(po.totalcost) as totalPO,
+    system.Timestamp as Time
+FROM PURCHASEORDERITEMS po
+GROUP BY po.productId,
+         TumblingWindow(minute, 5)),
+DETAILEDRATINGS as (
+SELECT 
+    r.productId,
+    AVG(r.rating) as avgRating,
+    AVG(r.sentiment) as avgSentiment,
+    system.Timestamp as Time
+FROM RATINGS r
+GROUP BY r.productId,
+         TumblingWindow(minute, 5)),
+REPORT as (
+SELECT 
+    po.productId,
+    po.totalPO,
+    se.saleEventTotalCost,
+    r.avgRating,
+    r.avgSentiment
+FROM DETAILEDPURCHASEORDERS po
+JOIN DETAILEDRATINGS r
+ON r.productId = po.productId 
+AND r.Time = po.Time
+AND DATEDIFF(minute,po,r) BETWEEN 0 AND 5
+JOIN DETAILEDSALEEVENTS se
+ON se.productId = r.productId
+AND se.Time = r.Time
+AND DATEDIFF(minute,se,po) BETWEEN 0 AND 5)
+
+SELECT 
+    ref.productName,
+    r.saleEventTotalCost as saleEventTotalCost,
+    r.totalPO as totalPO,
+    r.avgRating as avgRating,
+    r.avgSentiment as avgSentiment,
+    System.Timestamp as Time
+INTO OUTPUT
+FROM REPORT r
+JOIN Reference ref ON r.productId = ref.productId

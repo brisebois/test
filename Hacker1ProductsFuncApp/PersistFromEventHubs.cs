@@ -5,22 +5,24 @@ using Newtonsoft.Json;
 using System;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Threading.Tasks;
 
 namespace Hacker1ProductsFuncApp
 {
     public static class PersistFromEventHubs
     {
         [FunctionName("PersistFromEventHubs")]
-        public static void Run([EventHubTrigger("hacker1ehub", Connection = "EventHubsConnectionString")]string[] messages,
-                                [DocumentDB(
-                                    databaseName: "OpenHack",
-                                    collectionName: "SalesEvents",
-                                    ConnectionStringSetting = "CosmosDBConnection")]
-                                IAsyncCollector<SalesEvent> salesEvents,
-                                TraceWriter log)
+        public static async Task Run([EventHubTrigger("hacker1ehub", Connection = "EventHubsConnectionString",ConsumerGroup = "Listen")]string[] messages,
+                                     [DocumentDB(
+                                        databaseName: "OpenHack",
+                                        collectionName: "SalesEvents",
+                                        ConnectionStringSetting = "CosmosDBConnection")]
+                                     IAsyncCollector<SalesEvent> salesEvents,
+                                     TraceWriter log)
         {
             var events = messages.Select(JsonConvert.DeserializeObject<SalesEvent>).ToList();
-            events.ForEach(async e => await salesEvents.AddAsync(e));
+            foreach (var e in events)
+                await salesEvents.AddAsync(e);
         }
     }
 

@@ -1,0 +1,30 @@
+﻿{
+  "Sample": null,
+  "EventHubProperties": null,
+  "BlobStorageProperties": null,
+  "IoTHubProperties": null,
+  "BlobReferenceProperties": {
+    "Container": "reference",
+    "DateFormat": "yyyy/MM/dd",
+    "PathPattern": "products.json",
+    "StorageAccounts": [
+      {
+        "AccountKey": null,
+        "AccountName": "hacker1storage"
+      }
+    ],
+    "TimeFormat": "HH"
+  },
+  "DataSourceCredentialDomain": "ac6f3bd4-e8fd-4e11-ad99-edbdeacbe8ff.StreamAnalyticsCredential",
+  "Name": "Reference",
+  "Type": "Reference data",
+  "DataSourceType": "Blob Storage",
+  "Serialization": {
+    "Encoding": "UTF8",
+    "Type": "Json",
+    "FieldDelimiter": null,
+    "Format": null
+  },
+  "CompresssionType": null,
+  "ScriptType": "Input"
+}

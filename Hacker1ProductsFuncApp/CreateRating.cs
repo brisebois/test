@@ -21,9 +21,20 @@ namespace Hacker1ProductsFuncApp
     {
         static HttpClient client = new HttpClient();
 
+        static string key = TelemetryConfiguration.Active.InstrumentationKey =
+            System.Environment.GetEnvironmentVariable("APPINSIGHTS_INSTRUMENTATIONKEY",
+                EnvironmentVariableTarget.Process);
+
+        static TelemetryClient telemetryClient =
+            new TelemetryClient { InstrumentationKey = key };
+
         [FunctionName("CreateRating")]
         public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "ratings")]HttpRequestMessage req,
-            [OrchestrationClient] DurableOrchestrationClient orchestrationClient,
+            [DocumentDB(
+                databaseName: "OpenHack",
+                collectionName: "Ratings",
+                ConnectionStringSetting = "CosmosDBConnection")]
+            IAsyncCollector<Rating> ratingsOut,
             TraceWriter log)
         {
             NewRating newRating;
@@ -38,25 +49,25 @@ namespace Hacker1ProductsFuncApp
                 return req.CreateErrorResponse(HttpStatusCode.BadRequest, "wrong payload");
             }
 
-            try
-            {
-                var json = await client.GetStringAsync($"https://hacker1.azurewebsites.net/api/users/{newRating.userId}");
-                var user = JsonConvert.DeserializeObject<User>(json);
-            }
-            catch
-            {
-                return req.CreateErrorResponse(HttpStatusCode.BadRequest, "invalid userId");
-            }
+            //try
+            //{
+            //    var json = await client.GetStringAsync($"https://hacker1.azurewebsites.net/api/users/{newRating.userId}");
+            //    var user = JsonConvert.DeserializeObject<User>(json);
+            //}
+            //catch
+            //{
+            //    return req.CreateErrorResponse(HttpStatusCode.BadRequest, "invalid userId");
+            //}
 
-            try
-            {
-                var json = await client.GetStringAsync($"https://hacker1.azurewebsites.net/api/products/{newRating.productId}");
-                var user = JsonConvert.DeserializeObject<Product>(json);
-            }
-            catch
-            {
-                return req.CreateErrorResponse(HttpStatusCode.BadRequest, "invalid productId");
-            }
+            //try
+            //{
+            //    var json = await client.GetStringAsync($"https://hacker1.azurewebsites.net/api/products/{newRating.productId}");
+            //    var user = JsonConvert.DeserializeObject<Product>(json);
+            //}
+            //catch
+            //{
+            //    return req.CreateErrorResponse(HttpStatusCode.BadRequest, "invalid productId");
+            //}
 
             if (newRating.rating <= 5 && newRating.rating >= 0)
             {
@@ -71,60 +82,36 @@ namespace Hacker1ProductsFuncApp
                     userNotes = newRating.userNotes
                 };
 
-                await orchestrationClient.StartNewAsync("PersistRating", rating.id, rating);
+                ITextAnalyticsClient client = new TextAnalyticsClient(new ApiKeyServiceClientCredentials())
+                {
+                    Endpoint = "https://southcentralus.api.cognitive.microsoft.com"
+                };
+
+                var result = await client.SentimentAsync(
+                    new MultiLanguageBatchInput(
+                        new List<MultiLanguageInput>
+                        {
+                            new MultiLanguageInput("en", "0", rating.userNotes)
+                        }));
+
+                rating.sentimentScore = result.Documents.First().Score;
+
+                await ratingsOut.AddAsync(rating);
+
+                telemetryClient.TrackEvent("Rating", new Dictionary<string, string>()
+                {
+                    {"id", rating.id},
+                    {"productId", rating.productId},
+                    {"userNotes", rating.userNotes}
+                }, new Dictionary<string, double>
+                {
+                    {"sentimentScore", rating.sentimentScore ?? 0d}
+                });
 
                 return req.CreateResponse(HttpStatusCode.OK, rating);
             }
 
             return req.CreateErrorResponse(HttpStatusCode.BadRequest, "invalid rating");
-        }
-    }
-
-    public static class PersistRating
-    {
-        private static string key = TelemetryConfiguration.Active.InstrumentationKey =
-            System.Environment.GetEnvironmentVariable("APPINSIGHTS_INSTRUMENTATIONKEY",
-                EnvironmentVariableTarget.Process);
-
-        private static TelemetryClient telemetryClient =
-            new TelemetryClient {InstrumentationKey = key};
-
-        [FunctionName("PersistRating")]
-        public static async Task Run([OrchestrationTrigger] DurableOrchestrationContext context,
-            [DocumentDB(
-                databaseName: "OpenHack",
-                collectionName: "Ratings",
-                ConnectionStringSetting = "CosmosDBConnection")]
-            IAsyncCollector<Rating> ratingsOut,
-            TraceWriter log)
-        {
-            var rating  = context.GetInput<Rating>();
-
-            ITextAnalyticsClient client = new TextAnalyticsClient(new ApiKeyServiceClientCredentials())
-            {
-                Endpoint = "https://southcentralus.api.cognitive.microsoft.com"
-            };
-
-            var result = await client.SentimentAsync(
-                new MultiLanguageBatchInput(
-                    new List<MultiLanguageInput>
-                    {
-                        new MultiLanguageInput("en", "0", rating.userNotes)
-                    }));
-
-            rating.sentimentScore = result.Documents.First().Score;
-
-            telemetryClient.TrackEvent("Rating", new Dictionary<string, string>()
-            {
-                {"id", rating.id},
-                {"productId", rating.productId},
-                {"userNotes", rating.userNotes}
-            }, new Dictionary<string, double>
-            {
-                {"sentimentScore", rating.sentimentScore ?? 0d}
-            });
-
-            await ratingsOut.AddAsync(rating);
         }
     }
 

@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.28107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hacker1ProductsFuncApp", "Hacker1ProductsFuncApp\Hacker1ProductsFuncApp.csproj", "{3A952E40-5669-4622-AA98-3B29771DEB1C}"
 EndProject
+Project("{E6C563F2-BDC2-4A24-ACBF-01715157DCBB}") = "ASASalesApp", "ASASalesApp\ASASalesApp.asaproj", "{6E2BADED-65E4-4E75-8D62-745881F920D0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{3A952E40-5669-4622-AA98-3B29771DEB1C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3A952E40-5669-4622-AA98-3B29771DEB1C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3A952E40-5669-4622-AA98-3B29771DEB1C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6E2BADED-65E4-4E75-8D62-745881F920D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6E2BADED-65E4-4E75-8D62-745881F920D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6E2BADED-65E4-4E75-8D62-745881F920D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6E2BADED-65E4-4E75-8D62-745881F920D0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,0 +1,25 @@
+﻿{
+  "Sample": "{\r\n  \"header\": {\r\n    \"salesNumber\": \"93a6cbbc-798a-2c39-a8bf-c285a2bc6fdd\",\r\n    \"dateTime\": \"2018-09-27 20:29:24\",\r\n    \"locationId\": \"LLL222\",\r\n    \"locationName\": \"Munson's Pickles and Preserves Farm\",\r\n    \"locationAddress\": \"3453 99th Place\",\r\n    \"locationPostcode\": \"98121\",\r\n    \"totalCost\": \"33.43\",\r\n    \"totalTax\": \"3.34\"\r\n  },\r\n  \"details\": [\r\n    {\r\n      \"productId\": \"65ab124a-9b2c-4294-a52d-18839364ef15\",\r\n      \"quantity\": \"1\",\r\n      \"unitCost\": \"8.99\",\r\n      \"totalCost\": \"8.99\",\r\n      \"totalTax\": \"0.90\",\r\n      \"productName\": \"Durian Durian\",\r\n      \"productDescription\": \"Smells suspect but tastes... also suspect.\"\r\n    },\r\n    {\r\n      \"productId\": \"551a9be9-7f1c-447d-83ee-b18f5a6fb018\",\r\n      \"quantity\": \"2\",\r\n      \"unitCost\": \"3.99\",\r\n      \"totalCost\": \"7.98\",\r\n      \"totalTax\": \"0.80\",\r\n      \"productName\": \"Matcha Green Tea\",\r\n      \"productDescription\": \"Green tea ice cream is good for you because it is green.\"\r\n    },\r\n    {\r\n      \"productId\": \"75542e38-563f-436f-adeb-f426f1dabb5c\",\r\n      \"quantity\": \"3\",\r\n      \"unitCost\": \"3.99\",\r\n      \"totalCost\": \"11.97\",\r\n      \"totalTax\": \"1.20\",\r\n      \"productName\": \"Starfruit Explosion\",\r\n      \"productDescription\": \"This starfruit ice cream is out of this world!\"\r\n    },\r\n    {\r\n      \"productId\": \"76065ecd-8a14-426d-a4cd-abbde2acbb10\",\r\n      \"quantity\": \"1\",\r\n      \"unitCost\": \"4.49\",\r\n      \"totalCost\": \"4.49\",\r\n      \"totalTax\": \"0.45\",\r\n      \"productName\": \"Gone Bananas\",\r\n      \"productDescription\": \"I'm not sure how appealing banana ice cream really is.\"\r\n    }\r\n  ]\r\n}",
+  "EventHubProperties": {
+    "ConsumerGroupName": "analytics",
+    "EventHubName": "hacker1ehub",
+    "ServiceBusNamespace": "hacker1",
+    "SharedAccessPolicyKey": null,
+    "SharedAccessPolicyName": "RootManageSharedAccessKey"
+  },
+  "BlobStorageProperties": null,
+  "IoTHubProperties": null,
+  "BlobReferenceProperties": null,
+  "DataSourceCredentialDomain": "a5a46399-7289-43ad-aca1-b19edfc2785a.StreamAnalyticsCredential",
+  "Name": "PosSaleEvents",
+  "Type": "Data Stream",
+  "DataSourceType": "Event Hub",
+  "Serialization": {
+    "Encoding": "UTF8",
+    "Type": "Json",
+    "FieldDelimiter": null,
+    "Format": null
+  },
+  "CompresssionType": "None",
+  "ScriptType": "Input"
+}
